@@ -1,10 +1,10 @@
 namespace DddInPractice.Logic
 {
-    public sealed class Money
+    public sealed class Money : ValueObject<Money>
     {
         public int OneCentCount { get; private set; }
         public int TenCentCount { get; private set; }
-        public int QuarterCentCount { get; private set; }
+        public int QuarterCount { get; private set; }
         public int OneDollarCount { get; private set; }
         public int FiveDollarCount { get; private set; }
         public int TwentyDollarCount { get; private set; }
@@ -19,7 +19,7 @@ namespace DddInPractice.Logic
         {
             OneCentCount = oneCentCount;
             TenCentCount = tenCentCount;
-            QuarterCentCount = quarterCentCount;
+            QuarterCount = quarterCentCount;
             OneDollarCount = oneDollarCount;
             FiveDollarCount = fiveDollarCount;
             TwentyDollarCount = twentyDollarCount;
@@ -30,13 +30,28 @@ namespace DddInPractice.Logic
             Money sum = new Money(
                 money1.OneCentCount + money2.OneCentCount,
                 money1.TenCentCount + money2.TenCentCount,
-                money1.QuarterCentCount + money2.QuarterCentCount,
+                money1.QuarterCount + money2.QuarterCount,
                 money1.OneDollarCount + money2.OneDollarCount,
                 money1.FiveDollarCount + money2.FiveDollarCount,
                 money1.TwentyDollarCount + money2.TwentyDollarCount
             );
 
             return sum;
+        }
+
+        protected override bool EqualsCore(Money other)
+        {
+            return OneCentCount == other.OneCentCount
+                && TenCentCount == other.TenCentCount
+                && QuarterCount == other.QuarterCount
+                && OneDollarCount == other.OneDollarCount
+                && FiveDollarCount == other.FiveDollarCount
+                && TwentyDollarCount == other.TwentyDollarCount;
+        }
+
+        protected override int GetHashCodeCore()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
