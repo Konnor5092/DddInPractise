@@ -1,13 +1,25 @@
+using System;
+
 namespace DddInPractice.Logic
 {
     public sealed class Money : ValueObject<Money>
     {
-        public int OneCentCount { get; private set; }
-        public int TenCentCount { get; private set; }
-        public int QuarterCount { get; private set; }
-        public int OneDollarCount { get; private set; }
-        public int FiveDollarCount { get; private set; }
-        public int TwentyDollarCount { get; private set; }
+        public int OneCentCount { get; }
+        public int TenCentCount { get; }
+        public int QuarterCount { get; }
+        public int OneDollarCount { get; }
+        public int FiveDollarCount { get; }
+        public int TwentyDollarCount { get; }
+        public decimal Amount {
+            get {
+                return OneCentCount * 0.01m +
+                    TenCentCount * 0.10m +
+                    QuarterCount * 0.25m +
+                    OneDollarCount +
+                    FiveDollarCount * 5 +
+                    TwentyDollarCount * 20;
+            }
+        }
 
         public Money(
             int oneCentCount, 
@@ -17,6 +29,19 @@ namespace DddInPractice.Logic
             int fiveDollarCount,
             int twentyDollarCount) 
         {
+            if (oneCentCount < 0) 
+                throw new InvalidOperationException();
+            if (tenCentCount < 0) 
+                throw new InvalidOperationException();
+            if (quarterCentCount < 0) 
+                throw new InvalidOperationException();
+            if (oneDollarCount < 0) 
+                throw new InvalidOperationException();
+            if (fiveDollarCount < 0) 
+                throw new InvalidOperationException();
+            if (twentyDollarCount < 0) 
+                throw new InvalidOperationException();
+
             OneCentCount = oneCentCount;
             TenCentCount = tenCentCount;
             QuarterCount = quarterCentCount;
@@ -51,7 +76,16 @@ namespace DddInPractice.Logic
 
         protected override int GetHashCodeCore()
         {
-            throw new System.NotImplementedException();
+            unchecked
+            {
+                int hashCode = OneCentCount;
+                hashCode = (hashCode * 397) ^ TenCentCount;
+                hashCode = (hashCode * 397) ^ QuarterCount;
+                hashCode = (hashCode * 397) ^ OneDollarCount;
+                hashCode = (hashCode * 397) ^ FiveDollarCount;
+                hashCode = (hashCode * 397) ^ TwentyDollarCount;
+                return hashCode;
+            }
         }
     }
 }
